@@ -12,7 +12,8 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
-  const [review, setReview] = useState('');
+  const [reviews, setReviews] = useState<Record<number, string>>({});
+
 
   // Hämta böcker när sidan laddas
   useEffect(() => {
@@ -45,13 +46,17 @@ export default function Home() {
   };
 
   const updateReview = async (id: number) => {
+    const review = reviews[id];
     if (!review) return;
+  
     await fetch(`http://localhost:5205/books/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ review }),
     });
-    setReview('');
+  
+    // Töm recensionen i fältet (för den boken)
+    setReviews((prev) => ({ ...prev, [id]: '' }));
     fetchBooks();
   };
 
@@ -96,8 +101,11 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Skriv recension..."
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
+                value={reviews[book.id] || ''}
+                onChange={(e) =>
+                setReviews((prev) => ({ ...prev, [book.id]: e.target.value }))
+                }
+
                 className="border p-1 flex-1"
               />
               <button
