@@ -44,7 +44,6 @@ export default function Home() {
     });
     fetchBooks();
   };
-
   const updateReview = async (id: number) => {
     const review = reviews[id];
     if (!review) return;
@@ -52,10 +51,9 @@ export default function Home() {
     await fetch(`http://localhost:5205/books/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ review }),
+      body: JSON.stringify({ review }), // viktigt att matcha backend
     });
   
-    // Töm recensionen i fältet (för den boken)
     setReviews((prev) => ({ ...prev, [id]: '' }));
     fetchBooks();
   };
